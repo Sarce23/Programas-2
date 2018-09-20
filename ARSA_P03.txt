@@ -1,0 +1,212 @@
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<conio.h>
+#include<string.h>
+#include "arce.h"
+
+void menu(void);
+void NumFactorial(void);
+Tnodo GenDatos(void);
+Tnodo GenDatoFact(int);
+void PUSHPILA(Tnodo *tope, Tnodo *num);
+Tnodo POPPILA(Tnodo *tope);
+void PUSHCOLA(Tnodo *cola, Tnodo *ultimo, Tnodo *nuevo);
+Tnodo POPCOLA(Tnodo *cola, Tnodo *ultimo);
+
+
+int main()
+{
+	srand(time(NULL));
+	menu();
+	return 0;
+}
+
+void menu (void)
+{
+   int op, n;
+   Tnodo cola=NULL, ultimo=NULL, nuevo=NULL, temp=NULL;
+   do{
+      system("CLS");
+      printf("MENU PRINCIPAL:\n\n");
+   
+      printf("1. PROGRAMA FACTORIAL DE UN NUMERO.\n");
+      printf("2. PROGRAMA DE COLAS.\n");
+      printf("3. SALIR\n");
+
+      op = ValidaNum(1, 3, "ESCOGE UNA OPCION: \n", "ERROR, OPCION NO VALIDA. \n", 1);
+   
+      switch(op)
+      {       
+        case 1:
+             do{
+                system("CLS");
+                printf("ELIGE UNA OPCION:\n\n");
+   
+                printf("1. CALCULAR EL FACTORIAL DE UN NUMERO \n");
+                printf("2. SALIR AL MENU PRINCIPAL.\n");      
+                op = ValidaNum(1, 2, "ESCOGE UNA OPCION: \n", "ERROR, OPCION NO VALIDA. \n", 1);
+  	  
+	            switch(op)
+	            {
+                     case 1:
+						NumFactorial();
+						
+                     break;       
+                  }
+             }while(op != 2);
+             op=0;
+        break;
+                
+        case 2:
+             do{
+                system("CLS");
+                printf("ELIGE UN METODO A REALIZAR PARA COLA:\n\n");
+   
+                printf("1. PUSH \n");
+                printf("2. POP\n");
+                printf("3. SALIR AL MENU PRINCIPAL.\n");      
+                op = ValidaNum(1, 3, "ESCOGE UNA OPCION: \n", "ERROR, OPCION NO VALIDA. \n", 1);
+  	  
+	            switch(op)
+	            {
+                    case 1:
+			 		     NumFactorial();	
+                    break;
+          
+		            case 2: 
+		   			     temp = POPCOLA(&cola, &ultimo);  			
+		   			     if(temp)
+	   				     {
+                            servicio(temp);
+		   					free (temp);
+                         }
+		                 else
+				         {
+					    	printf("\nCOLA VACIA\n\n");
+					    	system("PAUSE");
+					     }
+						
+                     break;
+		    
+                     case 3:
+		  		          while (cola)
+	  			          {
+		  			            temp = POPCOLA(&cola, &ultimo);
+	   			                if(temp)
+	   				            {
+   					                free (temp);
+                                }
+                          }
+		                  printf("\nSE HA LIMPIADO TODA LA COLA.\n\n");
+                          system("PAUSE");
+                          
+	                 break;	       
+                  }
+             }while(op != 3);
+             op=0;
+        break;
+      }
+   }while(op != 3); 
+   system("PAUSE");           
+}
+
+void NumFactorial(void)
+{
+	int i, j, num;
+	long fact=1;
+	Tnodo nuevo=NULL, temp=NULL, tope=NULL;
+	system("CLS");
+	num = ValidaNum(1, 12, "INGRESA UN NUMERO PARA CALCULAR SU FACTORIAL: \n", "ERROR, NUMERO NO VALIDO. \n", 1);
+	j = num;
+
+	
+	for(i = j; i > 0; i--)
+	{
+		nuevo = GenDatoFact(num);
+		PUSHPILA(&tope,&nuevo);
+		num--;
+	}
+	
+	for(i=0; i < j; i++)
+	{
+		temp = POPPILA(&tope);
+		fact = fact * temp->dato;
+		free(temp);
+	}
+	printf("Factorial de %d = %ld \n\n", j, fact);
+	system("PAUSE");
+}
+
+
+Tnodo GenDatos(void)
+{
+	Tnodo temp = NULL;
+	temp = (Tnodo)malloc(sizeof(Tdato));
+	temp->dato = (rand()%100);
+	temp->sig = NULL;
+	
+	return temp;
+}
+
+Tnodo GenDatoFact(int num)
+{
+	Tnodo temp = NULL;
+	
+	temp = (Tnodo)malloc(sizeof(Tdato));
+	temp->dato = num;
+	temp->sig = NULL;
+	
+	return temp;
+}
+
+void PUSHPILA(Tnodo *tope, Tnodo *nuevo)
+{
+	(*nuevo)->sig = *tope;
+	*tope = *nuevo;
+	*nuevo = NULL;
+}
+
+Tnodo POPPILA(Tnodo *tope)
+{
+	Tnodo temp = NULL;
+	if(*tope)
+		{
+			temp = *tope;
+			*tope = (*tope)->sig;
+			temp->sig = NULL;
+		}
+	return temp;
+}
+
+void PUSHCOLA(Tnodo *cola, Tnodo *ultimo, Tnodo *nuevo)
+{
+     if(!*cola)
+	 {
+          *cola = *nuevo;
+     }
+     else
+     {
+	      (*ultimo)->sig = *nuevo;
+     }
+     *ultimo = *nuevo;
+     *nuevo = NULL;
+}
+
+Tnodo POPCOLA(Tnodo *cola, Tnodo *ultimo)
+{
+	Tnodo temp = NULL;
+	if(*cola)
+	{
+        temp = *cola;
+	    *cola = (*cola)->sig;
+	    temp->sig = NULL;
+	    if(temp == *ultimo)
+	    {
+             *ultimo = NULL;
+        }
+	}
+	
+	return temp;
+}
+
